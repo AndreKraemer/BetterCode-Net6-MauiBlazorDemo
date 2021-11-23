@@ -1,0 +1,63 @@
+﻿@page "/sessions"
+@using BetterCodeMauiBlazorDemo.Models
+@using BetterCodeMauiBlazorDemo.Services
+@inject IDataService DataService
+
+<h3>Programm</h3>
+@if (sessions == null)
+{
+    <p><em>Lade...</em></p>
+}
+
+<div class="container">
+    @foreach (var session in sessions)
+    {
+        @if (session.Speaker == null)
+        {
+            <div class="row session row-eq-height m-t-lg">
+                <div class="col-sm-12 col-md-3 vcenter">
+                    <p class="time"><i class="far fa-clock"></i>@session.Start - @session.End</p>
+                </div>
+                <div class="col-sm-12 col-md-9 vcenter">
+                    <p class="break">@session.Title</p>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="row session row-eq-height ">
+                <div class="col-sm-12 col-md-3 vcenter">
+                    <p class="time"><i class="far fa-clock"></i>@session.Start - @session.End</p>
+                </div>
+                <div class="col-xs-12 col-md-9">
+                    <div class="row">
+                        <div class="col-xs-12 col-md-2 speaker"><img src="/images/@session.Speaker.Image" style="width:100%; border:solid 1px #ccc;" class="img_grey"></div>
+                        <div class="col-xs-12 col-md-10">
+                            <div class="session-details">
+                                <div class="title">
+                                    <p>
+                                        <a href="/session-detail/@session.Id"  class="eventlink">@session.Title</a>
+                                    </p><p></p>
+                                </div>
+                                <div>
+                                    <p class="author">@session.Speaker.Name<br> &nbsp; <span class="company">@session.Speaker.Company</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+
+@code {
+    private IEnumerable<Session> sessions;
+
+    protected override Task OnInitializedAsync()
+    {
+        sessions = DataService.GetSessions();
+        return Task.CompletedTask;
+    }
+}

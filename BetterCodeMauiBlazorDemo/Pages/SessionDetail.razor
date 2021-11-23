@@ -1,0 +1,56 @@
+﻿@page "/session-detail/{Id:int}"
+@using BetterCodeMauiBlazorDemo.Models
+@using BetterCodeMauiBlazorDemo.Services
+@using Microsoft.Maui.Essentials
+@inject IDataService DataService
+
+@if (session == null)
+{
+    <p><em>Lade...</em></p>
+}
+<h1>@session.Title</h1>
+<div>@session.Description</div>
+<h2>Lernziele</h2>
+<ul>
+    @foreach(var goal in @session.Goals)
+    {
+        <li>@goal</li>
+    }
+</ul>
+<h2>Speaker</h2>
+<img src="/images/@session.Speaker.Image" />
+<div>
+    @session.Speaker.Bio
+</div>
+<div @onclick="OpenTwitter" class ="twitter-link">@session.Speaker.TwitterUrl</div>
+<div><button class="btn btn-primary" @onclick="CallSpeaker">Sprecher jetzt anrufen</button></div>
+
+
+@code {
+    private Session session;
+
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override void OnInitialized()
+    {
+        session = DataService.GetSession(Id);
+    }
+
+    private void OpenTwitter()
+    {
+        Browser.OpenAsync(session.Speaker.TwitterUrl);
+    }
+
+    private void CallSpeaker()
+    {
+        try
+        {
+            PhoneDialer.Open("12345678");
+        }
+        catch (FeatureNotSupportedException ex)
+        {
+            System.Diagnostics.Debug.WriteLine("Feature nicht untersützt");
+        }
+    }
+}
